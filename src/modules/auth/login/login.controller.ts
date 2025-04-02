@@ -1,13 +1,13 @@
 import { body, validationResult } from 'express-validator';
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import { BaseUserType } from '../../constants/types/authTypes';
+import { BaseUserType } from '../auth.types';
 import dotenv from 'dotenv';
-import { ROUTES } from '../../constants/routes';
-import { LoginUser } from '../../services/auth/loginService';
-import { LoginSuccessResponseDto } from '../../dto/auth/loginResponse.dto';
-import { AppError } from '../../utils/AppError';
-import { validateDTOs } from '../../utils/validateDTOs';
+import { ROUTES } from '../../../constants/routes';
+import { LoginUser } from './login.service';
+import { LoginSuccessResponseDto } from './loginResponse.dto';
+import { AppError } from '../../../utils/AppError';
+import { validateDTOs } from '../../../utils/validateDTOs';
 
 export const loginValidators = [
   body('email').isEmail().withMessage('Podaj prawidłowy adres email'),

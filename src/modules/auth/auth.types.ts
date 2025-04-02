@@ -10,6 +10,7 @@ export interface IUser {
   surname: string;
   email: string;
   password: string;
+  hashedPassword: string;
   role: UserRole;
   created_at: Date;
 }

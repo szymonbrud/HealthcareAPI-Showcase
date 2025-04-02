@@ -1,9 +1,9 @@
 import express from 'express';
 import { authenticateJWT } from '../../middlewares/authMiddleware';
-import { registerValidators, registerController } from '../../controllers/auth/registerController';
+import { registerValidators, registerController } from './register/register.controller';
 import { ROUTES } from '../../constants/routes';
-import { loginController, loginValidators } from '../../controllers/auth/loginController';
-import { refreshController } from '../../controllers/auth/refreshController';
+import { loginController, loginValidators } from './login/login.controller';
+import { refreshController } from './refresh/refresh.controller';
 
 const router = express.Router();
 

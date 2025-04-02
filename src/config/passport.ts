@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
-import { selectUserDataByEmail, selectUserDataById } from '../models/authModels';
+import { selectUserDataByEmail, selectUserDataById } from '../modules/auth/auth.models';
 
 // Konfiguracja strategii lokalnej (email + hasło)
 passport.use(

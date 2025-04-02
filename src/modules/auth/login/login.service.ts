@@ -1,8 +1,8 @@
-import { generateRefreshToken, generateToken } from '../../utils/jwtUtils';
+import { generateRefreshToken, generateToken } from '../../../utils/jwtUtils';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { insertRefreshToken } from '../../models/authModels';
-import { BaseUserType } from '../../constants/types/authTypes';
+import { insertRefreshToken } from '../auth.models';
+import { BaseUserType } from '../auth.types';
 
 export const LoginUser = async (user: BaseUserType) => {
   const accessToken = generateToken(user.id);

@@ -1,9 +1,9 @@
-import { BaseUserType, IRefreshToken, IUser } from '../constants/types/authTypes';
-import db from '../config/database';
+import { BaseUserType, IRefreshToken, IUser } from './auth.types';
+import db from '../../config/database';
 import { PoolClient } from 'pg';
 
 export const selectUserDataByEmail = async (
-  email: string,
+  email: IUser['email'],
 ): Promise<Pick<IUser, 'id' | 'email' | 'role' | 'password'>> => {
   const result = await db.query('SELECT id, email, role, password FROM users WHERE email = $1', [
     email,
@@ -12,7 +12,7 @@ export const selectUserDataByEmail = async (
   return result.rows[0];
 };
 
-export const selectUserDataById = async (id: number): Promise<BaseUserType> => {
+export const selectUserDataById = async (id: IUser['id']): Promise<BaseUserType> => {
   const result = await db.query('SELECT id, email, role FROM users WHERE id = $1', [id]);
   return result.rows[0];
 };
@@ -23,10 +23,10 @@ export const insertUser = async ({
   email,
   hashedPassword,
 }: {
-  name: string;
-  surname: string;
-  email: string;
-  hashedPassword: string;
+  name: IUser['name'];
+  surname: IUser['surname'];
+  email: IUser['email'];
+  hashedPassword: IUser['hashedPassword'];
 }): Promise<BaseUserType> => {
   const result = await db.query(
     'INSERT INTO users (name, surname, email, password, role, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id, email, role',
@@ -43,12 +43,10 @@ export const insertRefreshToken = async (
     hashedRefreshToken,
     expiresAt,
   }: {
-    // TODO: te typy chyba też nie powinnny być z palca, czyli userid nie powinon być z palca że to number
-    // TODO: a może to właśnie powinno być zawsze wybierane za pomcocą PICK z user
-    userId: number;
-    refreshTokenId: string;
-    hashedRefreshToken: string;
-    expiresAt: Date;
+    userId: IUser['id'];
+    refreshTokenId: IRefreshToken['token_id'];
+    hashedRefreshToken: IRefreshToken['token_hash'];
+    expiresAt: IRefreshToken['expires_at'];
   },
   client?: PoolClient,
 ) => {
@@ -60,7 +58,7 @@ export const insertRefreshToken = async (
 };
 
 export const selectRefreshTokenByTokenId = async (
-  tokenId: string,
+  tokenId: IRefreshToken['token_id'],
 ): Promise<Pick<IRefreshToken, 'token_hash'>> => {
   const result = await db.query(
     'SELECT token_hash from refresh_tokens WHERE token_id = $1 AND expires_at > NOW()',
@@ -69,7 +67,10 @@ export const selectRefreshTokenByTokenId = async (
   return result.rows[0];
 };
 
-const deleteRefreshTokenByTokenId = async (tokenId: string, client?: PoolClient) => {
+const deleteRefreshTokenByTokenId = async (
+  tokenId: IRefreshToken['token_id'],
+  client?: PoolClient,
+) => {
   const localDB = client || db;
   await localDB.query('DELETE FROM refresh_tokens WHERE token_id = $1', [tokenId]);
 };
@@ -80,10 +81,10 @@ export const refreshTokenTransaction = async ({
   hashedRefreshToken,
   expiresAt,
 }: {
-  userId: number;
-  refreshTokenId: string;
-  hashedRefreshToken: string;
-  expiresAt: Date;
+  userId: IUser['id'];
+  refreshTokenId: IRefreshToken['token_id'];
+  hashedRefreshToken: IRefreshToken['token_hash'];
+  expiresAt: IRefreshToken['expires_at'];
 }) => {
   const client = await db.getClient();
   try {
