@@ -1,7 +1,7 @@
 import { generateRefreshToken, generateToken } from '../../../utils/jwtUtils';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { insertRefreshToken } from '../auth.models';
+import { authRepository } from '../auth.models';
 import { BaseUserType } from '../auth.types';
 
 export const LoginUser = async (user: BaseUserType) => {
@@ -14,12 +14,13 @@ export const LoginUser = async (user: BaseUserType) => {
   const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
 
   // refreshToken expires in 1d
-  const expiresAt = new Date();
-  expiresAt.setDate(
-    expiresAt.getDate() + Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN_NUMBER_OF_DAYS || 1),
-  );
+  const numberOfDaysInTokenExpire =
+    Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN_NUMBER_OF_DAYS) || 1;
 
-  await insertRefreshToken({
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + numberOfDaysInTokenExpire);
+
+  await authRepository.insertRefreshToken({
     userId: user.id,
     hashedRefreshToken,
     refreshTokenId,

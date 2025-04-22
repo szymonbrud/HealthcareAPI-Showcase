@@ -19,7 +19,7 @@ export type BaseUserType = Pick<IUser, 'id' | 'email' | 'role'>;
 
 export interface IRefreshToken {
   id: number;
-  user_id: Pick<IUser, 'id'>;
+  user_id: IUser['id'];
   token_id: string;
   token_hash: string;
   expires_at: Date;

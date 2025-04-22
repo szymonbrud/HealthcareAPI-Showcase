@@ -31,7 +31,7 @@ export const refreshController = async (req: Request, res: Response, next: NextF
       secure: true,
       sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000,
-      path: `/api${ROUTES.BASE_AUTH}${ROUTES.AUTH.REFRESH}`,
+      path: `${ROUTES.BASE}${ROUTES.BASE_AUTH}${ROUTES.AUTH.REFRESH}`,
     });
 
     res.json(validatedSuccessResponseData);

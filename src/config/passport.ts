@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
-import { selectUserDataByEmail, selectUserDataById } from '../modules/auth/auth.models';
+import { authRepository } from '../modules/auth/auth.models';
 
 // Konfiguracja strategii lokalnej (email + hasło)
 passport.use(
@@ -13,7 +13,7 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const user = await selectUserDataByEmail(email);
+        const user = await authRepository.selectUserDataByEmail(email);
 
         if (!user) return done(null, false, { message: 'Nieprawidłowy email lub hasło' });
 
@@ -41,7 +41,7 @@ passport.use(
   new JwtStrategy(jwtOptions, async (payload: { id: number }, done) => {
     try {
       // Znajdź użytkownika na podstawie ID z tokenu
-      const user = await selectUserDataById(payload.id);
+      const user = await authRepository.selectUserDataById(payload.id);
 
       if (!user) return done(null, false);
 

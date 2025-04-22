@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
+import { AppError } from '../utils/AppError';
 
 // Middleware do ochrony tras
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +13,8 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
       }
 
       if (!user) {
-        return res.status(401).json({ message: 'Nieautoryzowany dostęp' });
+        next(new AppError('Nieautoryzowany dostęp', 401));
+        return;
       }
 
       req.user = user;

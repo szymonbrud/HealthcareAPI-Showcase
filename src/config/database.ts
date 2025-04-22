@@ -1,4 +1,4 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool, PoolClient, QueryResult } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -20,8 +20,16 @@ pool.on('error', (err) => {
   process.exit(-1);
 });
 
-export default {
+export interface Idb {
+  query: (text: string, params?: any[]) => Promise<QueryResult>;
+  getPool: () => Pool;
+  getClient: () => Promise<PoolClient>;
+}
+
+const db: Idb = {
   query: (text: string, params?: any[]): Promise<QueryResult> => pool.query(text, params),
   getPool: () => pool,
   getClient: () => pool.connect(),
 };
+
+export default db;

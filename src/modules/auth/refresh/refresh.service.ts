@@ -1,5 +1,5 @@
 import { generateRefreshToken, generateToken, verifyRefreshToken } from '../../../utils/jwtUtils';
-import { refreshTokenTransaction, selectRefreshTokenByTokenId } from '../auth.models';
+import { authRepository } from '../auth.models';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { AppError } from '../../../utils/AppError';
@@ -9,7 +9,7 @@ export const refreshService = async (jwt: string) => {
   const { tokenId, userId } = data as { userId: number; tokenId: string };
 
   // walidacja tokenu w bazie danych
-  const result = await selectRefreshTokenByTokenId(tokenId);
+  const result = await authRepository.selectRefreshTokenByTokenId(tokenId);
 
   if (!result) {
     throw new AppError('Brak autoryzacji', 401);
@@ -34,7 +34,12 @@ export const refreshService = async (jwt: string) => {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 1);
 
-  await refreshTokenTransaction({ hashedRefreshToken, refreshTokenId, expiresAt, userId });
+  await authRepository.refreshTokenTransaction({
+    hashedRefreshToken,
+    refreshTokenId,
+    expiresAt,
+    userId,
+  });
 
   return {
     refreshToken,
